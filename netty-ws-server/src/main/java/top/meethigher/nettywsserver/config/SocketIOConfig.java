@@ -29,6 +29,8 @@ public class SocketIOConfig {
         config.setAuthorizationListener(authListener);
         config.setHostname(wsConfig.getHost());
         config.setPort(wsConfig.getPort());
+        //默认是/socket.io
+        config.setContext("/ws");
         return new SocketIOServer(config);
     }
 

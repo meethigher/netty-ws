@@ -27,6 +27,8 @@ public class Main {
 
     public static Socket connect(String url) {
         IO.Options options = new IO.Options();
+        //配置路径，该路径与服务端的context一致
+        options.path="/ws";
         //websocket协议
         options.transports = new String[]{"websocket"};
         //失败重试次数
