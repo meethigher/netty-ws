@@ -29,6 +29,9 @@ public class SocketIOConfig {
         config.setAuthorizationListener(authListener);
         config.setHostname(wsConfig.getHost());
         config.setPort(wsConfig.getPort());
+        //配置最大传输大小,10M
+        config.setMaxFramePayloadLength(1024 * 1024);
+        config.setMaxHttpContentLength(1024 * 1024);
         //默认是/socket.io
         config.setContext("/ws");
         return new SocketIOServer(config);

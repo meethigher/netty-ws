@@ -17,6 +17,7 @@ server {
              proxy_pass http://server;
         }
 }
+## 下面这种的client配置可直接参照源码
 server {
         listen 13001;
         server_name localhost;
