@@ -16,4 +16,6 @@ public interface WsEvent {
     String MORNING_MEETING = "morning-meeting";
     //晚会
     String EVENING_MEETING = "evening-meeting";
+    //通用消息
+    String MESSAGE = "message";
 }

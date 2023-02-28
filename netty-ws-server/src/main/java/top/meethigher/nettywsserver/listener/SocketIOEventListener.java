@@ -66,8 +66,18 @@ public class SocketIOEventListener {
      */
     @OnEvent(WsEvent.EVENING_MEETING)
     public void eveningMeeting(SocketIOClient client, AckRequest request, Object o) {
-        log.info("获取信息：" + o);
+        log.info("接收到客户端消息: {}", o);
         client.sendEvent(WsEvent.EVENING_MEETING, "会议结束");
+    }
+
+
+    /**
+     * 通用消息监听事件
+     */
+    @OnEvent(WsEvent.MESSAGE)
+    public void message(SocketIOClient client, AckRequest request, Object o) {
+        log.info("接收到客户端消息: {}", o);
+        client.sendEvent(WsEvent.MESSAGE, "已收到");
     }
 
 

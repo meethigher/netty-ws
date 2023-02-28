@@ -33,48 +33,52 @@ public class Main {
         //websocket协议
         options.transports = new String[]{"websocket"};
         //失败重试次数，默认是int最大值
-//        options.reconnectionAttempts = 3;
+        //options.reconnectionAttempts = 3;
         //失败重连的时间间隔(ms)，默认是1秒
-        options.reconnectionDelay = 1000;
+        options.reconnectionDelay = 5000;
         //连接超时时间(ms)，默认是20秒
-        options.timeout = 500;
+        options.timeout = 5000;
+        //是否开启新连接(与同ip、同端口的服务建立链接时，是否复用已有链接)，默认是否。改为true可以用于压测
+        options.forceNew = true;
+
         Socket socket = null;
         try {
             socket = IO.socket(url, options);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (socket != null) {
+            socket.on(Socket.EVENT_CONNECT, objects -> {
+                System.out.println("连接成功" + new Date());
+            });
+            socket.on(Socket.EVENT_ERROR, objects -> {
+                System.out.println("连接失败" + new Date());
+            });
+            socket.on(Socket.EVENT_RECONNECT_ATTEMPT, objects -> {
+                System.out.println("尝试重连" + new Date());
+            });
+            socket.on(Socket.EVENT_CONNECT_TIMEOUT, objects -> {
+                System.out.println("连接超时" + new Date());
+            });
+            socket.on(Socket.EVENT_MESSAGE, o -> {
+                System.out.println("收到消息：" + o[0]);
+            });
+        }
         return socket;
     }
 
     public static void main(String[] args) throws Exception {
         Socket socket = connect(template);
-        AtomicReference<String> message = new AtomicReference<>("");
-        socket.on(Socket.EVENT_CONNECT, objects -> {
-            System.out.println("连接成功" + new Date());
-        });
-        socket.on(Socket.EVENT_ERROR, objects -> {
-            System.out.println("连接失败" + new Date());
-        });
-        socket.on(Socket.EVENT_RECONNECT_ATTEMPT, objects -> {
-            System.out.println("尝试重连" + new Date());
-        });
-        socket.on(Socket.EVENT_CONNECT_TIMEOUT, objects -> {
-            System.out.println("连接超时" + new Date());
-        });
-        //监听消息
-        socket.on("morning-meeting", args1 -> message.set((String) args1[0]));
         socket.connect();
 
         while (true) {
             if (socket.connected()) {
-                System.out.println("发送消息");
-                socket.emit("morning-meeting", "我来开会了");
+                String str = "我来开会了";
+                System.out.println("发送消息：" + str);
+                //socket.emit(Socket.EVENT_MESSAGE, str);
+                socket.send(str);
             }
-            Thread.sleep(1000L);
-            if (message.get().equals("会议结束")) {
-                System.exit(0);
-            }
+            Thread.sleep(2000L);
         }
     }
 }
