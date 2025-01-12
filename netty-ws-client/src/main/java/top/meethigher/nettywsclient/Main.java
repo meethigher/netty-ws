@@ -2,10 +2,10 @@ package top.meethigher.nettywsclient;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 
 import java.util.Date;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -70,15 +70,15 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Socket socket = connect(template);
         socket.connect();
-
-        while (true) {
-            if (socket.connected()) {
-                String str = "我来开会了";
-                System.out.println("发送消息：" + str);
-                //socket.emit(Socket.EVENT_MESSAGE, str);
-                socket.send(str);
+        new Timer(false).scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (socket.connected()) {
+                    String str = "我来开会了";
+                    System.out.println("发送消息：" + str);
+                    socket.send(str);
+                }
             }
-            Thread.sleep(2000L);
-        }
+        }, 0L, 500);
     }
 }
